@@ -11,10 +11,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public enum ResponseType {
     CONNECT("CONNECT"),
-    ROOM_CREATE("ROOM_CREATE"),
-    ROOM_JOIN("ROOM_JOIN"),
-    ROOM_LEAVE("ROOM_LEAVE"),
-    ROOM_MESSAGE("ROOM_MESSAGE");
+    CREATE_ROOM("CREATE_ROOM"),
+    JOIN_ROOM("JOIN_ROOM"),
+    LEAVE_ROOM("LEAVE_ROOM"),
+    MESSAGE_ROOM("MESSAGE_ROOM");
 
     private final String name;
 

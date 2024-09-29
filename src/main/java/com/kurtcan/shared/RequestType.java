@@ -11,10 +11,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public enum RequestType {
     DISCONNECT("DISCONNECT"),
-    ROOM_MESSAGE("ROOM_MESSAGE"),
     CREATE_ROOM("CREATE_ROOM"),
     JOIN_ROOM("JOIN_ROOM"),
-    LEAVE_ROOM("LEAVE_ROOM");
+    LEAVE_ROOM("LEAVE_ROOM"),
+    MESSAGE_ROOM("MESSAGE_ROOM");
 
     private final String name;
 
