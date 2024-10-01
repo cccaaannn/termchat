@@ -28,4 +28,20 @@ public class Response {
         return Optional.ofNullable(content);
     }
 
+    public static Response success(String type, String content) {
+        return Response.builder()
+                .status(ResponseStatus.SUCCESS)
+                .type(type)
+                .content(content)
+                .build();
+    }
+
+    public static Response failure(String type, String content) {
+        return Response.builder()
+                .status(ResponseStatus.FAILURE)
+                .type(type)
+                .content(content)
+                .build();
+    }
+
 }
