@@ -15,11 +15,15 @@ public class Room {
     @Builder.Default
     private List<RoomMember> members = new CopyOnWriteArrayList<>();
 
-    public static Room createWithMember(RoomMember roomMember) {
+    public static Room withMember(RoomMember roomMember) {
         return Room.builder()
                 .id(UUID.randomUUID())
                 .members(new CopyOnWriteArrayList<>(List.of(roomMember)))
                 .build();
+    }
+
+    public void addMember(RoomMember member) {
+        members.add(member);
     }
 
     public Optional<RoomMember> getMember(UUID memberId) {
