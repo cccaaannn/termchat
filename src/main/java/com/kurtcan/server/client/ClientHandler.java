@@ -20,43 +20,38 @@ import java.util.UUID;
 @Slf4j
 public class ClientHandler implements Runnable {
     private final Connection connection;
-    private final UUID clientId;
     private final RoomService roomService;
     private final ClientState clientState = new ClientState();
 
     public ClientHandler(Socket socket) {
         var clientId = UUID.randomUUID();
         this.connection = new Connection(socket);
-        this.clientId = clientId;
-        this.roomService = new RoomService(clientId, clientState);
-        ServerState.CLIENT_CONNECTIONS.put(clientId, connection);
+        clientState.CLIENT_ID = clientId;
+        this.roomService = new RoomService(clientState);
+        ServerState.addClient(clientId, connection);
 
         log.debug("Client connected with id: {}, address: {}", clientId, socket.getInetAddress());
     }
 
     private void handleConnect() {
-        var connectResponse = ConnectResponse.builder()
-                .clientId(clientId)
-                .build();
-
         var response = Response.builder()
                 .type(ResponseType.CONNECT.name())
                 .status(ResponseStatus.SUCCESS)
-                .content(Serializer.serialize(connectResponse))
+                .content(Serializer.serialize(new ConnectResponse(clientState.CLIENT_ID)))
                 .build();
 
         var clientResponse = ClientResponse.builder()
-                .receiverId(clientId)
+                .receiverId(clientState.CLIENT_ID)
                 .response(response)
                 .build();
 
-        ServerState.RESPONSE_QUEUE.add(clientResponse);
+        ServerState.queueClientResponse(clientResponse);
     }
 
     private void handleDisconnect() {
-        log.debug("Disconnecting client: {}", clientId);
+        log.debug("Disconnecting client: {}", clientState.CLIENT_ID);
 
-        var clientConnection = ServerState.CLIENT_CONNECTIONS.remove(clientId);
+        var clientConnection = ServerState.removeClient(clientState.CLIENT_ID);
         if (Objects.nonNull(clientConnection)) {
             clientConnection.close();
         }
@@ -91,13 +86,13 @@ public class ClientHandler implements Runnable {
                 log.debug("Incoming request: {}", request);
 
                 if (request.isEmpty()) {
-                    log.info("Invalid request: {}, Skipping", requestStr);
+                    log.debug("Invalid request: {}, Skipping", requestStr);
                     continue;
                 }
 
                 var type = RequestType.fromString(request.get().getType());
                 if (type.isEmpty()) {
-                    log.info("Invalid request type: {}, Skipping", request.get().getType());
+                    log.debug("Invalid request type: {}, Skipping", request.get().getType());
                     continue;
                 }
 
