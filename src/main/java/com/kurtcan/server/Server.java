@@ -18,7 +18,7 @@ public class Server {
 
         try (
                 var serverSocket = new ServerSocket(port);
-                var executor = Executors.newVirtualThreadPerTaskExecutor();
+                var executor = Executors.newVirtualThreadPerTaskExecutor()
         ) {
             log.info("Server starting on port {}", port);
 
