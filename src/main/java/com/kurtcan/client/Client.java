@@ -24,7 +24,7 @@ public class Client {
 
         try (
                 var connection = new Connection(new Socket(hostname, port));
-                var executor = Executors.newVirtualThreadPerTaskExecutor();
+                var executor = Executors.newVirtualThreadPerTaskExecutor()
         ) {
             log.info("Connected to server");
 
