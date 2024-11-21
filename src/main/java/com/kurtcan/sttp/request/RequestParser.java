@@ -1,19 +1,16 @@
 package com.kurtcan.sttp.request;
 
 import com.kurtcan.sttp.SttpVersion;
-import com.kurtcan.sttp.util.SerializationUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Slf4j
 public class RequestParser {
-    static final int MIN_PARTS = 3;
+    static final int MIN_PARTS = 2;
     static final int VERSION_INDEX = 0;
     static final int TYPE_INDEX = 1;
-    static final int CORRELATION_ID_INDEX = 2;
     static final int CONTENT_INDEX = MIN_PARTS;
     static final String DELIMITER = "<|>";
 
@@ -36,8 +33,6 @@ public class RequestParser {
             return Optional.empty();
         }
 
-        var correlationId = SerializationUtils.isNullOrEmpty(parts[CORRELATION_ID_INDEX]) ? null : UUID.fromString(parts[CORRELATION_ID_INDEX]);
-
         String content = null;
         if (parts.length > MIN_PARTS) {
             try {
@@ -51,7 +46,6 @@ public class RequestParser {
         var request = Request.builder()
                 .version(version.get())
                 .type(type.get())
-                .correlationId(correlationId)
                 .content(content)
                 .build();
 
@@ -62,9 +56,7 @@ public class RequestParser {
         StringBuilder message = new StringBuilder();
         message.append(request.getVersion().getName())
                 .append(DELIMITER)
-                .append(request.getType())
-                .append(DELIMITER)
-                .append(request.getCorrelationId());
+                .append(request.getType());
 
         request.getContent().ifPresent(content -> message.append(DELIMITER).append(content));
 

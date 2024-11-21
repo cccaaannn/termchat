@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NonNull;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Data
 @Builder
@@ -19,8 +18,6 @@ public class Response {
     private ResponseStatus status;
 
     private String type;
-
-    private UUID correlationId;
 
     private String content;
 
