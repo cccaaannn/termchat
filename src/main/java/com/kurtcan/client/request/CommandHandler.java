@@ -30,7 +30,6 @@ public class CommandHandler {
 
     private void send(Request request) {
         log.debug("Sending request: {}", request);
-        request.setCorrelationId(UUID.randomUUID());
         connection.getWriter().println(RequestParser.serialize(request));
     }
 
@@ -101,12 +100,14 @@ public class CommandHandler {
         send(request);
 
         // Reset active room id, even if the server fails to process the request
-        ClientState.ACTIVE_ROOM_ID = null;
+        ClientState.leaveRoom();
     }
 
     public void messageRoom(String consoleInput) {
+        if (consoleInput.isBlank()) return;
+
         var roomMessage = RoomMessageRequest.builder()
-                .roomId(ClientState.ACTIVE_ROOM_ID)
+                .roomId(ClientState.getRoomId())
                 .message(consoleInput)
                 .build();
 

@@ -25,7 +25,7 @@ public class RequestHandler implements Runnable {
                 console.flush();
                 var consoleInput = console.readLine();
 
-                if (!ClientState.isRoomActive()) {
+                if (!ClientState.isRoomJoined()) {
                     if (CommandHandler.isCommand(consoleInput, CommandHandler.CREATE_ROOM_COMMAND)) {
                         commandHandler.createRoom(consoleInput);
                         continue;
@@ -41,7 +41,7 @@ public class RequestHandler implements Runnable {
                     continue;
                 }
 
-                if (ClientState.ACTIVE_ROOM_ID != null) {
+                if (ClientState.isRoomJoined()) {
                     commandHandler.messageRoom(consoleInput);
                     continue;
                 }
