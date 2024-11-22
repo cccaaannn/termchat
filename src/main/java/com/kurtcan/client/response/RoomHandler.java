@@ -12,7 +12,7 @@ public class RoomHandler {
     public void createRoom(String content) {
         var roomResponse = Serializer.deserialize(content, CreateRoomResponse.class);
         var roomId = roomResponse.getRoomId();
-        ClientState.ACTIVE_ROOM_ID = roomId;
+        ClientState.joinRoom(roomId);
 
         ClientPrinter.print("Room created with id: {}", roomId);
     }
@@ -23,8 +23,8 @@ public class RoomHandler {
         var clientId = roomResponse.getClientId();
         var username = roomResponse.getUsername();
 
-        if (clientId.equals(ClientState.CLIENT_ID)) {
-            ClientState.ACTIVE_ROOM_ID = roomId;
+        if (ClientState.isMyClient(clientId)) {
+            ClientState.joinRoom(roomId);
             ClientPrinter.print("Joined to: {}", roomId);
         }
 
@@ -37,8 +37,8 @@ public class RoomHandler {
         var clientId = roomResponse.getClientId();
         var username = roomResponse.getUsername();
 
-        if (clientId.equals(ClientState.CLIENT_ID)) {
-            ClientState.ACTIVE_ROOM_ID = null;
+        if (ClientState.isMyClient(clientId)) {
+            ClientState.leaveRoom();
             ClientPrinter.print("Room left: {}", roomId);
         }
 
@@ -51,8 +51,8 @@ public class RoomHandler {
         var username = roomMessage.getUsername();
         var message = roomMessage.getMessage();
 
-        if (!clientId.equals(ClientState.CLIENT_ID)) {
-            ClientPrinter.print("{}:{}", username, message);
+        if (!ClientState.isMyClient(clientId)) {
+            ClientPrinter.print("{}: {}", username, message);
         }
     }
 }

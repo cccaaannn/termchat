@@ -1,12 +1,12 @@
 package com.kurtcan.client.response;
 
-import com.kurtcan.client.util.ClientPrinter;
 import com.kurtcan.client.ClientState;
-import com.kurtcan.shared.threading.Connection;
+import com.kurtcan.client.util.ClientPrinter;
 import com.kurtcan.shared.ResponseType;
 import com.kurtcan.shared.dto.response.ConnectResponse;
 import com.kurtcan.shared.dto.response.ErrorResponse;
 import com.kurtcan.shared.serialization.Serializer;
+import com.kurtcan.shared.threading.Connection;
 import com.kurtcan.shared.threading.ThreadingUtils;
 import com.kurtcan.sttp.response.ResponseParser;
 import com.kurtcan.sttp.response.ResponseStatus;
@@ -23,15 +23,15 @@ public class ResponseHandler implements Runnable {
 
     private void handleConnect(String content) {
         var response = Serializer.deserialize(content, ConnectResponse.class);
-        ClientState.CLIENT_ID = response.getClientId();
-        ClientPrinter.print("Connected with id: {}", ClientState.CLIENT_ID);
+        ClientState.connect(response.getClientId());
+        ClientPrinter.print("Connected with id: {}", ClientState.getClientId());
     }
 
     @Override
     public void run() {
         try {
             while (true) {
-                ThreadingUtils.sleep(200);
+                ThreadingUtils.sleep(50);
 
                 try {
                     String responseStr = connection.getReader().readLine();
