@@ -2,6 +2,7 @@ package com.kurtcan.client;
 
 import com.kurtcan.client.request.RequestHandler;
 import com.kurtcan.client.response.ResponseHandler;
+import com.kurtcan.client.util.ClientPrinter;
 import com.kurtcan.shared.threading.Connection;
 import com.kurtcan.shared.threading.ThreadingUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ public class Client {
     private final static String hostname = "localhost";
 
     private static void handleDisconnect() {
-        log.debug("Server disconnected");
+        ClientPrinter.print("Disconnected from server");
         System.exit(1);
     }
 
