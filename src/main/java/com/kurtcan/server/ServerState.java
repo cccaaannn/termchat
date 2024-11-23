@@ -14,11 +14,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 @Slf4j
 public class ServerState {
-    public final static Map<UUID, Connection> CLIENT_CONNECTIONS = new ConcurrentHashMap<>();
-    public final static BlockingQueue<ClientResponse> RESPONSE_QUEUE = new LinkedBlockingQueue<>();
+    private final static Map<UUID, Connection> CLIENT_CONNECTIONS = new ConcurrentHashMap<>();
+    private final static BlockingQueue<ClientResponse> RESPONSE_QUEUE = new LinkedBlockingQueue<>();
 
-    public final static Map<UUID, Room> ROOMS = new ConcurrentHashMap<>();
-    public final static BlockingQueue<RoomResponse> ROOM_RESPONSE_QUEUE = new LinkedBlockingQueue<>();
+    private final static Map<UUID, Room> ROOMS = new ConcurrentHashMap<>();
+    private final static BlockingQueue<RoomResponse> ROOM_RESPONSE_QUEUE = new LinkedBlockingQueue<>();
 
     // Client connection management
     public static Connection getClientConnection(UUID clientId) {

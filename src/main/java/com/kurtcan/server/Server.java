@@ -26,7 +26,7 @@ public class Server {
             executor.submit(new ResponseQueueProcessor());
 
             while (true) {
-                ThreadingUtils.sleep(200);
+                ThreadingUtils.sleep(50);
                 var socket = serverSocket.accept();
                 var clientHandler = new ClientHandler(socket);
                 executor.submit(clientHandler);

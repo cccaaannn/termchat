@@ -24,24 +24,24 @@ public class ClientHandler implements Runnable {
     private final ClientState clientState = new ClientState();
 
     public ClientHandler(Socket socket) {
-        var clientId = UUID.randomUUID();
+        clientState.connect(UUID.randomUUID());
         this.connection = new Connection(socket);
-        clientState.CLIENT_ID = clientId;
         this.roomService = new RoomService(clientState);
-        ServerState.addClient(clientId, connection);
 
-        log.debug("Client connected with id: {}, address: {}", clientId, socket.getInetAddress());
+        ServerState.addClient(clientState.getClientId(), connection);
+
+        log.debug("Client connected with id: {}, address: {}", clientState.getClientId(), socket.getInetAddress());
     }
 
     private void handleConnect() {
         var response = Response.builder()
                 .type(ResponseType.CONNECT.name())
                 .status(ResponseStatus.SUCCESS)
-                .content(Serializer.serialize(new ConnectResponse(clientState.CLIENT_ID)))
+                .content(Serializer.serialize(new ConnectResponse(clientState.getClientId())))
                 .build();
 
         var clientResponse = ClientResponse.builder()
-                .receiverId(clientState.CLIENT_ID)
+                .receiverId(clientState.getClientId())
                 .response(response)
                 .build();
 
@@ -49,15 +49,15 @@ public class ClientHandler implements Runnable {
     }
 
     private void handleDisconnect() {
-        log.debug("Disconnecting client: {}", clientState.CLIENT_ID);
+        log.debug("Disconnecting client: {}", clientState.getClientId());
 
-        var clientConnection = ServerState.removeClient(clientState.CLIENT_ID);
+        var clientConnection = ServerState.removeClient(clientState.getClientId());
         if (Objects.nonNull(clientConnection)) {
             clientConnection.close();
         }
 
         // Clean up room
-        if (Objects.nonNull(clientState.ROOM_ID)) {
+        if (clientState.isRoomJoined()) {
             roomService.leaveRoomWithCleanUpAndNotify();
         }
     }
@@ -65,11 +65,10 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try (connection) {
-            ThreadingUtils.sleep(200);
             handleConnect();
 
             while (true) {
-                ThreadingUtils.sleep(200);
+                ThreadingUtils.sleep(50);
 
                 if (connection.isDisconnected()) {
                     handleDisconnect();
